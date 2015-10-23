@@ -3,7 +3,7 @@ var expect = require('chai').expect,
   ScriptManager = require('../lib/ScriptManager.js').ScriptManager,
   PageAgent = require('../lib/PageAgent.js').PageAgent;
 
-describe('PageAgent', function() {
+describe.skip('PageAgent', function() {
   describe('getResourceContent()', function() {
     before(setupDebugScenario);
 

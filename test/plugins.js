@@ -48,7 +48,7 @@ function addPluginWithProtocol() {
   return manifest;
 }
 
-describe('Plugins', function() {
+describe.skip('Plugins', function() {
   describe('InspectorJson', function() {
     beforeEach(clearPlugins);
 
