@@ -1,11 +1,13 @@
 'use strict';
 
 const util       = require('util')
-	, EventEmitter = require('events')
+	, EventEmitter = require('eventemitter2').EventEmitter2
 	, callback     = require('./callback');
 
 function FrontendConnection() {
-	EventEmitter.call(this);
+	EventEmitter.call(this, {
+		wildcard: true
+	});
 	this._callback = callback();
 }
 
@@ -33,6 +35,25 @@ FrontendConnection.prototype.getResourceTree = function getResourceTree(cb) {
 	this.emit('message', payload);
 };
 
+/**
+ *
+ * @param url
+ * @param cb
+ */
+FrontendConnection.prototype.getResourceContent = function getResourceContent(url, cb) {
+	var id = this._callback.wrap(cb)
+		, payload = JSON.stringify({
+			id: id,
+			method: 'Page.getResourceContent',
+			params: {
+				frameId: 'nodeinspector-toplevel-frame',
+				url: url
+			}
+		});
+
+	this.emit('message', payload);
+};
+
 /// More methods to come .... also need to sort out what we do with events!!!
 
 /**
@@ -44,7 +65,14 @@ FrontendConnection.prototype.send = function send(payload) {
 		, id      = message.id
 		, args    = [ id ];
 
-	if (id) {
+	if (!id) {
+		var dotCase = require('dot-case')
+			, method  = dotCase(message.method);
+
+		//console.log(method);
+
+		this.emit(method, message);
+	} else {
 		if (message.result) {
 			args.push(message.result);
 		}
